@@ -2,6 +2,7 @@ package com.flexherotabletui.controls
 {
 	import com.flexherotabletui.skins.PromptListSkin;
 	
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
 	import spark.components.Button;
@@ -16,13 +17,19 @@ package com.flexherotabletui.controls
 		[SkinPart(required="true")]
 		public var cancelButton:Button;
 		
+		public static var CANCEL:String = "CANCEL_FORM";
+		
+		public static var ACCEPT:String = "ACCEPT_FORM";
+		
 		
 		public function PromptList()
 		{
 			super();
 			setStyle("skinClass", PromptListSkin);
 		}
-		
+		/**
+		 * @inheritDoc 
+		 */		
 		override protected function partAdded(partName:String, instance:Object):void
 		{
 			super.partAdded(partName, instance);
@@ -35,7 +42,9 @@ package com.flexherotabletui.controls
 				cancelButton.addEventListener(MouseEvent.CLICK, handleCancel );
 			}
 		}
-		
+		/**
+		 * @inheritDoc 
+		 */
 		override protected function partRemoved(partName:String, instance:Object):void
 		{
 			super.partRemoved(partName, instance);
@@ -51,12 +60,12 @@ package com.flexherotabletui.controls
 		
 		private function handleCancel(event:MouseEvent):void
 		{
-			trace("cancel");
+			this.dispatchEvent(new Event(CANCEL));
 		}
 		
 		private function handleAccept(event:MouseEvent):void
 		{
-			trace("accept");
+			this.dispatchEvent(new Event(ACCEPT));
 		}
 	}
 }

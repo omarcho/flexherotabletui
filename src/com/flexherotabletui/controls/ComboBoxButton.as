@@ -1,5 +1,6 @@
 package com.flexherotabletui.controls
 {
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TouchEvent;
 	
@@ -24,6 +25,16 @@ package com.flexherotabletui.controls
 			this.addEventListener(MouseEvent.CLICK, this.onButtonClick);
 		}
 		
+		public function get allowMultipleSelection():Boolean
+		{
+			return _allowMultipleSelection;
+		}
+
+		public function set allowMultipleSelection(value:Boolean):void
+		{
+			_allowMultipleSelection = value;
+		}
+
 		protected function onButtonClick(event:MouseEvent):void
 		{
 			this.displayList();
@@ -42,19 +53,21 @@ package com.flexherotabletui.controls
 		{
 			if(this._list == null) {
 				this._list = new PromptList();
+				this._list.allowMultipleSelection = this.allowMultipleSelection;
 				this._list.minWidth = 240;
 				this._list.minHeight = 320;
 				this._list.dataProvider = this.dataProvider;
 				PopUpManager.addPopUp(this._list, this, true);
-				this._list.addEventListener(TouchEvent.TOUCH_OUT,this.onExitListTouch);
+				
+				this._list.addEventListener(PromptList.ACCEPT, this.onExitListTouch);
+				this._list.addEventListener(PromptList.CANCEL, this.onExitListTouch);
 			}
 			
 		}
 		
-		protected function onExitListTouch(event:TouchEvent):void
+		protected function onExitListTouch(event:Event):void
 		{
 			if(this._list) {
-				this._list.addEventListener(TouchEvent.TOUCH_OUT,this.onExitListTouch);
 				PopUpManager.removePopUp(this._list);
 				this._list = null;
 			}
@@ -62,6 +75,8 @@ package com.flexherotabletui.controls
 		}
 		
 		protected var _dataProvider:IList;
+		
+		private var _allowMultipleSelection:Boolean = false;
 
 		public function get dataProvider():IList
 		{

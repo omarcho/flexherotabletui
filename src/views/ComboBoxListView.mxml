@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:View xmlns:fx="http://ns.adobe.com/mxml/2009"
 		xmlns:s="library://ns.adobe.com/flex/spark"
-		title="ComboBoxList" xmlns:controls="com.flexherotabletui.controls.*">
+		xmlns:controls="com.flexherotabletui.controls.*"
+		creationComplete="onCreationComplete(event)" title="ComboBoxList">
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			
+			protected function onCreationComplete(event:FlexEvent):void
+			{
+				this.country_btn.dataProvider = new ArrayCollection([
+					{label:"Brasil"},
+					{label:"Chile"},
+					{label:"Argentina"},
+					{label:"Mexico"}
+				]);
+			}
+			
+		]]>
+	</fx:Script>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<controls:ComboBoxButton label="Contry" />
+	<controls:ComboBoxButton id="country_btn" label="Contry" allowMultipleSelection="true"/>
 </s:View>
