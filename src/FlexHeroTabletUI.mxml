@@ -4,5 +4,6 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<s:ViewNavigator label="ComboBoxList" width="100%" height="100%" firstView="views.ComboBoxListView"/>
+	<s:ViewNavigator label="ComboBoxList" width="100%" height="100%" 
+					 firstView="views.ComboBoxListView"/>
 </s:Application>

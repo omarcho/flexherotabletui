@@ -17,9 +17,9 @@ package com.flexherotabletui.controls
 		[SkinPart(required="true")]
 		public var cancelButton:Button;
 		
-		public static var CANCEL:String = "CANCEL_FORM";
+		public static var CANCEL:String = "cancel";
 		
-		public static var ACCEPT:String = "ACCEPT_FORM";
+		public static var ACCEPT:String = "accept";
 		
 		
 		public function PromptList()

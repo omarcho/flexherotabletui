@@ -5,6 +5,8 @@
 		creationComplete="onCreationComplete(event)" title="ComboBoxList">
 	<fx:Script>
 		<![CDATA[
+			import com.flexherotabletui.controls.ComboBoxButtonEvent;
+			
 			import mx.collections.ArrayCollection;
 			import mx.events.FlexEvent;
 			
@@ -18,10 +20,19 @@
 				]);
 			}
 			
+			protected function country_btn_acceptHandler(event:ComboBoxButtonEvent):void
+			{
+				trace(event.type);				
+				trace(event.data);				
+			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<controls:ComboBoxButton id="country_btn" label="Contry" allowMultipleSelection="true"/>
+	<controls:ComboBoxButton id="country_btn" label="Contry"
+							 accept="country_btn_acceptHandler(event)"
+							 cancel="country_btn_acceptHandler(event)"
+							 allowMultipleSelection="true"/>
 </s:View>
