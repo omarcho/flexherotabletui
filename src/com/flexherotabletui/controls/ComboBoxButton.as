@@ -5,6 +5,7 @@ package com.flexherotabletui.controls
 	import flash.events.TouchEvent;
 	
 	import mx.collections.IList;
+	import mx.events.FlexEvent;
 	import mx.managers.PopUpManager;
 	
 	import spark.components.Button;
@@ -86,6 +87,7 @@ package com.flexherotabletui.controls
 				}
 				
 				PopUpManager.addPopUp(this._list, this, true);
+				this._list.addEventListener(FlexEvent.CREATION_COMPLETE, onHandleComplete);
 				
 				this._list.addEventListener(PromptList.ACCEPT, this.onExitListTouch);
 				this._list.addEventListener(PromptList.CANCEL, this.onExitListTouch);
@@ -152,6 +154,11 @@ package com.flexherotabletui.controls
 		 * If you set this flag the selected items are preserver for later selection.
 		 */		
 		public var rememberSelectedItems:Boolean = true;
+		
+		
+		private function onHandleComplete (event:Event):void {
+			PopUpManager.centerPopUp(this._list);
+		}
 		
 		/**
 		 * Dataprovider for the poped-up list
