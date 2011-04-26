@@ -13,29 +13,60 @@ package com.flexherotabletui.controls.treemap
 	 */	
 	public class TreemapLeafItemRenderer extends LabelItemRenderer implements ITreemapLeafItemRenderer  {
 		
-		private var _mapOwner:Treemap;
+		private var _mapOwner:ITreemap;
 		
+		private var backgroundColor:uint = 0xEFEFEF;
+		
+		/**
+		 * Default color for label text 
+		 */		
+		public var defaultTextColor:uint = 0x222222;
+		/**
+		 * Default color for label text when selected
+		 */
+		public var selectedTextColor:uint = 0xFFFFFF;
+		
+		/**
+		 * Constructor 
+		 */		
 		public function TreemapLeafItemRenderer()
 		{
 			super();
-			this.setStyle('textAlign',"center");
+			this.setStyle('textAlign','center');
+			this.setStyle('color', this.defaultTextColor);
 		}
-		
+		/**
+		 * @inheritDoc
+		 */		
 		override public function set data(value:Object):void {
 			super.data = value;
 			if(this.mapOwner) {
 				this.label = this.mapOwner.labelFunction(this.data);
-				this.setStyle('backgroundColor', this.mapOwner.colorFunction(this.data));
+				this.backgroundColor = this.mapOwner.colorFunction(this.data);
 			}
 		}
-		
-		public function set mapOwner(map:Treemap):void {
+		/**
+		 * @inheritDoc
+		 */	
+		public function set mapOwner(map:ITreemap):void {
 			this._mapOwner = map;
 		}
 		
-		public function get mapOwner():Treemap {
+		public function get mapOwner():ITreemap {
 			return this._mapOwner;
 		}
+		/**
+		 * @inheritDoc
+		 */	
+		override public function set selected(value:Boolean):void {
+			super.selected = value;
+			if(this.selected) {
+				this.setStyle('color',this.selectedTextColor);
+			} else {
+				this.setStyle('color',this.defaultTextColor);
+			}
+		}
+		
 		/**
 		 * @inheritDoc 
 		 */		
@@ -43,48 +74,27 @@ package com.flexherotabletui.controls.treemap
 										  unscaledHeight:Number):void
 		{
 			// figure out backgroundColor
-			var backgroundColor:*;
-			var downColor:* = getStyle("downColor");
-			var drawBackground:Boolean = true;
-			
-			if (down && downColor !== undefined)
-			{
-				backgroundColor = downColor;
-			}
-			else if (selected)
-			{
-				backgroundColor = getStyle("selectionColor");
-			}
-			else if (hovered)
-			{
-				backgroundColor = getStyle("rollOverColor");
-			}
-			else if (showsCaret)
-			{
-				backgroundColor = getStyle("selectionColor");
-			}
-			else
-			{
-				backgroundColor = getStyle("backgroundColor");
-			} 
-			
 			// draw backgroundColor
 			// the reason why we draw it in the case of drawBackground == 0 is for
 			// mouse hit testing purposes
-			graphics.beginFill(backgroundColor, drawBackground ? 1 : 0);
-			graphics.lineStyle(0.5,0x000000,0.5);
-			graphics.drawRect(0, 0, unscaledWidth, unscaledHeight);
-			graphics.endFill();
-			
-			var topSeparatorColor:uint;
-			var topSeparatorAlpha:Number;
-			var bottomSeparatorColor:uint;
-			var bottomSeparatorAlpha:Number;
-			
+			graphics.clear();
+			var useGradient:Boolean = true;
+			if(useGradient) {
+				var colors:Array = [backgroundColor, backgroundColor ];
+				var alphas:Array = [1, .8];
+				var ratios:Array = [0, 255];
+				var matrix:Matrix = new Matrix();
+				matrix.createGradientBox(unscaledWidth, unscaledHeight, Math.PI / 2, 0, 0 );
+				graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, ratios, matrix);
+			} else {
+				graphics.beginFill(backgroundColor, 1);
+			}
 			// Selected and down states have a gradient overlay as well
 			// as different separators colors/alphas
+			var lineWidth:Number = .5;
 			if (selected || down)
 			{
+				/*
 				var colors:Array = [0x000000, 0x000000 ];
 				var alphas:Array = [.2, .1];
 				var ratios:Array = [0, 255];
@@ -94,51 +104,14 @@ package com.flexherotabletui.controls.treemap
 				matrix.createGradientBox(unscaledWidth, unscaledHeight, Math.PI / 2, 0, 0 );
 				graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, ratios, matrix);
 				graphics.drawRect(0, 0, unscaledWidth, unscaledHeight);
-				graphics.endFill();
-			}
-			
-			// separators are a highlight on the top and shadow on the bottom
-			topSeparatorColor = 0xFFFFFF;
-			topSeparatorAlpha = .3;
-			bottomSeparatorColor = 0x000000;
-			bottomSeparatorAlpha = .3;
-			
-			
-			// draw separators
-			// don't draw top separator for down and selected states
-			if (!(selected || down))
-			{
-				/*graphics.beginFill(topSeparatorColor, topSeparatorAlpha);
-				graphics.drawRect(0, 0, unscaledWidth, unscaledHeight);
 				graphics.endFill();*/
+				lineWidth = 1;
+				graphics.lineStyle(lineWidth, this.selectedTextColor);
+			} else {
+				graphics.lineStyle(lineWidth, this.defaultTextColor);
 			}
-			
-			/*graphics.beginFill(bottomSeparatorColor, bottomSeparatorAlpha);
-			graphics.drawRect(0, unscaledHeight - (mx_internal::isLastItem ? 0 : 1), unscaledWidth, 1);
-			graphics.endFill();*/
-			
-			
-			// add extra separators to the first and last items so that 
-			// the list looks correct during the scrolling bounce/pull effect
-			// top
-			/*if (itemIndex == 0)
-			{
-				graphics.beginFill(bottomSeparatorColor, bottomSeparatorAlpha);
-				graphics.drawRect(0, -1, unscaledWidth, 1);
-				graphics.endFill(); 
-			}*/
-			// bottom
-			/*if (mx_internal::isLastItem)
-			{
-				// we want to offset the bottom by 1 so that we don't get
-				// a double line at the bottom of the list if there's a 
-				// border
-				graphics.beginFill(topSeparatorColor, topSeparatorAlpha);
-				graphics.drawRect(0, unscaledHeight + 1, unscaledWidth, 1);
-				graphics.endFill(); 
-			}*/
-			
-			
+			graphics.drawRect(0, 0, unscaledWidth - lineWidth, unscaledHeight - lineWidth);
+			graphics.endFill();
 		}
 	}
 }

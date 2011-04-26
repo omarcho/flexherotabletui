@@ -8,5 +8,5 @@ Interfaces
 ----------
 
 * [ComboBoxButton] work's as the old-know PromptButton of Flex 3. It's a button that display a list on a modal pop-up.
-
+* [Treemap] a very simple and ligthway heatmap mobile optimized.
 * Etc....
